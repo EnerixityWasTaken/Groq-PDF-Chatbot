@@ -93,4 +93,4 @@ if uploaded_file:
             with st.chat_message("assistant"):
                 st.write(response["answer"])
         except Exception as e:
-            st.error(f"An error occurred while processing your query: {e}"
+            st.error(f"An error occurred while processing your query: {e}")
