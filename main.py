@@ -21,14 +21,19 @@ st.title("Groq-PDF-Chatbot")
 google_api_key = st.text_input("Enter your Google API key:", type="password")
 groq_api_key = st.text_input("Enter your Groq API key:", type="password")
 
-# Store the API keys in variables, but not use them in the system
+
 if google_api_key and groq_api_key:
     st.session_state.google_api_key = google_api_key
     st.session_state.groq_api_key = groq_api_key
 else:
     st.warning("Please enter both Google and Groq API keys.")
 
-# Initialize the LLM model with Groq API key (no longer using the key)
+env_data = f"GROQ_API_KEY={groq_api_key}" + "\n" + f"GOOGLE_API_KEY={google_api_key}"
+
+with open('.env','w') as file:
+    file.write(env_data)
+
+# Initialize the LLM model with Groq API key 
 llm = ChatGroq(model='llama-3.2-3b-preview')
 
 # Define the prompt template
