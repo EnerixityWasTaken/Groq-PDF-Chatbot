@@ -11,9 +11,6 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains import create_retrieval_chain
 import tempfile
 
-# Load environment variables
-load_dotenv()
-
 # Streamlit UI
 st.title("Groq-PDF-Chatbot")
 
@@ -31,6 +28,9 @@ if google_api_key and groq_api_key:
         file.write(env_data)
 else:
     st.warning("Please enter both Google and Groq API keys.")
+
+# Load environment variables
+load_dotenv()
 
 # Initialize LLM with Groq API key
 llm = ChatGroq(model="llama-3.2-3b-preview")
