@@ -26,14 +26,15 @@ if google_api_key and groq_api_key:
     env_data = f"GROQ_API_KEY={groq_api_key}\nGOOGLE_API_KEY={google_api_key}"
     with open(".env", "w") as file:
         file.write(env_data)
+    # Load environment variables
+    load_dotenv()
+    
+    # Initialize LLM with Groq API key
+    llm = ChatGroq(model="llama-3.2-3b-preview")
 else:
     st.warning("Please enter both Google and Groq API keys.")
 
-# Load environment variables
-load_dotenv()
 
-# Initialize LLM with Groq API key
-llm = ChatGroq(model="llama-3.2-3b-preview")
 
 # Define the prompt template
 prompt = ChatPromptTemplate.from_template(
