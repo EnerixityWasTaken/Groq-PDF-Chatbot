@@ -50,14 +50,10 @@ prompt = ChatPromptTemplate.from_template(
 # Function to embed PDF data into the vector store
 def vector_db(pdf_file):
     try:
-        # Save uploaded PDF to a temporary file
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_pdf:
-            temp_pdf.write(pdf_file.read())
-            temp_pdf_path = temp_pdf.name
 
         # Load and split the PDF file
         embedding = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-        pdf_loader = PyPDFLoader(temp_pdf_path)
+        pdf_loader = PyPDFLoader(pdf_file)
         doc_text = pdf_loader.load()
 
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
