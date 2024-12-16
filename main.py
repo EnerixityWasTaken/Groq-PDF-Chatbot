@@ -11,10 +11,24 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains import create_retrieval_chain
 import tempfile
 
-# Load environment variables
+# Load environment variables (if needed)
 load_dotenv()
 
-# Initialize the LLM model
+# UI for API keys
+st.title("Groq-PDF-Chatbot")
+
+# Text inputs for Google and Groq API keys
+google_api_key = st.text_input("Enter your Google API key:", type="password")
+groq_api_key = st.text_input("Enter your Groq API key:", type="password")
+
+# Store the API keys in variables, but not use them in the system
+if google_api_key and groq_api_key:
+    st.session_state.google_api_key = google_api_key
+    st.session_state.groq_api_key = groq_api_key
+else:
+    st.warning("Please enter both Google and Groq API keys.")
+
+# Initialize the LLM model with Groq API key (no longer using the key)
 llm = ChatGroq(model='llama-3.2-3b-preview')
 
 # Define the prompt template
@@ -51,9 +65,6 @@ def vector_db(pdf_file):
     except Exception as e:
         st.error(f"Error during vector database creation: {e}")
 
-# UI Elements
-st.title("PDF Question Answering System")
-
 # File uploader for PDF
 uploaded_file = st.file_uploader("Upload your PDF", type="pdf")
 
@@ -79,3 +90,4 @@ if uploaded_file:
 
         except Exception as e:
             st.error(f"An error occurred while processing your query: {e}")
+
