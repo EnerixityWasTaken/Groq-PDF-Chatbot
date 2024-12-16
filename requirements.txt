@@ -1,4 +1,8 @@
 streamlit
 python-dotenv
 langchain
+langchain_community
+langchain_groq
+langchain_google_genai
+langchain_core
 faiss-cpu
