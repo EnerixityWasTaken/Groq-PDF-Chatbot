@@ -50,23 +50,18 @@ prompt = ChatPromptTemplate.from_template(
 # Function to embed PDF data into the vector store
 def vector_db(pdf_file):
     try:
-
-        # Load and split the PDF file
-        embedding = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-        pdf_loader = PyPDFLoader(pdf_file)
+        # Save the uploaded PDF to a temporary file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_pdf:
+            temp_pdf.write(pdf_file.read())
+            temp_pdf_path = temp_pdf.name
+        
+        # Load and split the PDF file using the temporary path
+        st.session_state.embedding = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+        pdf_loader = PyPDFLoader(temp_pdf_path)
         doc_text = pdf_loader.load()
-
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
-        final_text = text_splitter.split_documents(doc_text)
-
-        # Create FAISS vector store
-        vectors = FAISS.from_documents(final_text, embedding)
-
-        st.session_state.embedding = embedding
-        st.session_state.text_splitter = text_splitter
-        st.session_state.final_text = final_text
-        st.session_state.vectors = vectors
-
+        st.session_state.text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+        st.session_state.final_text = st.session_state.text_splitter.split_documents(doc_text)
+        st.session_state.vectors = FAISS.from_documents(st.session_state.final_text, st.session_state.embedding)
         st.success("PDF data embedded successfully!")
 
         # Clean up the temporary file
