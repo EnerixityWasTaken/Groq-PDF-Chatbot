@@ -26,9 +26,11 @@ if google_api_key and groq_api_key:
         file.write(env_data)
     # Load environment variables
     load_dotenv()
+else:
+    st.warning("Please enter both Google and Groq API keys.")
 
-    # Model selection dropdown
-    model_choice = st.selectbox(
+ # Model selection dropdown
+model_choice = st.selectbox(
         "Select the LLM model:",
         options=["mixtral-8x7b-32768",
         "gemma2-9b-it",
@@ -43,12 +45,12 @@ if google_api_key and groq_api_key:
     )
     
     # Initialize LLM with Groq API key and selected model
-    if st.button("Choose Model"):
+if st.button("Choose Model"):
         st.session_state.llm = ChatGroq(model=model_choice)
         st.success(f"Model {model_choice} loaded successfully!")
     
     # Define the prompt template
-    prompt = ChatPromptTemplate.from_template(
+prompt = ChatPromptTemplate.from_template(
         """
         Answer the questions based on the provided context only.
         Please provide the most accurate response based on the question.
@@ -60,7 +62,7 @@ if google_api_key and groq_api_key:
     )
     
     # Function to embed PDF data into the vector store
-    def vector_db(pdf_file):
+def vector_db(pdf_file):
             try:
                 # Save the uploaded PDF to a temporary file
                 with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_pdf:
@@ -82,10 +84,10 @@ if google_api_key and groq_api_key:
                 st.error(f"Error during vector database creation: {e}")
         
         # PDF file uploader
-    uploaded_file = st.file_uploader("Upload your PDF", type="pdf")
+uploaded_file = st.file_uploader("Upload your PDF", type="pdf")
         
         # Handle PDF upload and embedding
-    if uploaded_file:
+if uploaded_file:
         if st.button("Embed File"):
             if "vectors" not in st.session_state:
                 vector_db(uploaded_file)
