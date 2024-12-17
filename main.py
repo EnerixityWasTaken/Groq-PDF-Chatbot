@@ -34,8 +34,18 @@ else:
 # Model selection dropdown
 model_choice = st.selectbox(
     "Select the LLM model:",
-    options=["llama-3.2-3b-preview", "llama-7b", "llama-13b"],
-    help="Choose the model to use for your chatbot.",
+    options=[    "distil-whisper-large-v3-en",
+    "gemma2-9b-it",
+    "gemma-7b-it",
+    "llama-3.3-70b-versatile",
+    "llama-3.1-8b-instant",
+    "llama-guard-3-8b",
+    "llama3-70b-8192",
+    "llama3-8b-8192",
+    "mixtral-8x7b-32768",
+    "whisper-large-v3",
+    "whisper-large-v3-turbo"],
+    help="Choose the model to use for your chatbot."
 )
 
 # Initialize LLM with Groq API key and selected model
