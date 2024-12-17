@@ -85,6 +85,7 @@ if google_api_key and groq_api_key:
         
         # Handle PDF upload and embedding
     if uploaded_file:
+        if st.button("Embed File")
             if "vectors" not in st.session_state:
                 vector_db(uploaded_file)
         
