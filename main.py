@@ -42,6 +42,27 @@ if google_api_key and groq_api_key and not st.session_state.api_keys_set:
 if not st.session_state.api_keys_set:
     st.warning("Please enter both Google and Groq API keys to proceed.")
 else:
+
+    # Function to embed PDF data into the vector store
+    def vector_db(pdf_file):
+        try:
+        # Save the uploaded PDF to a temporary file
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_pdf:
+                temp_pdf.write(pdf_file.read())
+                temp_pdf_path = temp_pdf.name
+    
+            # Load and split the PDF file using the temporary path
+            st.session_state.embedding = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+            pdf_loader = PyPDFLoader(temp_pdf_path)
+            doc_text = pdf_loader.load()
+            st.session_state.text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+            st.session_state.final_text = st.session_state.text_splitter.split_documents(doc_text)
+            st.session_state.vectors = FAISS.from_documents(st.session_state.final_text, st.session_state.embedding)
+    
+            # Clean up the temporary file
+            os.remove(temp_pdf_path)
+        except Exception as e:
+            st.error(f"Error during vector database creation: {e}")
     # PDF file uploader (only show after API keys are set)
     uploaded_file = st.file_uploader("Upload your PDF", type="pdf")
 
@@ -89,24 +110,3 @@ else:
                         st.write(response["answer"])
                 except Exception as e:
                     st.error(f"An error occurred while processing your query: {e}")
-
-# Function to embed PDF data into the vector store
-def vector_db(pdf_file):
-    try:
-        # Save the uploaded PDF to a temporary file
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_pdf:
-            temp_pdf.write(pdf_file.read())
-            temp_pdf_path = temp_pdf.name
-
-        # Load and split the PDF file using the temporary path
-        st.session_state.embedding = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-        pdf_loader = PyPDFLoader(temp_pdf_path)
-        doc_text = pdf_loader.load()
-        st.session_state.text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-        st.session_state.final_text = st.session_state.text_splitter.split_documents(doc_text)
-        st.session_state.vectors = FAISS.from_documents(st.session_state.final_text, st.session_state.embedding)
-
-        # Clean up the temporary file
-        os.remove(temp_pdf_path)
-    except Exception as e:
-        st.error(f"Error during vector database creation: {e}")
