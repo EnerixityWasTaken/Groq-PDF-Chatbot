@@ -15,7 +15,7 @@ import tempfile
 st.title("Groq-PDF-Chatbot")
 
 # Text inputs for Google and Groq API keys
-google_api_key = st.text_input("Enter your Google API key:", type="password")
+google_api_key = st.text_input("Enter your Google Cloud API key:", type="password")
 groq_api_key = st.text_input("Enter your Groq API key:", type="password")
 
 # Save API keys to .env if provided
@@ -28,13 +28,23 @@ if google_api_key and groq_api_key:
         file.write(env_data)
     # Load environment variables
     load_dotenv()
-    
-    # Initialize LLM with Groq API key
-    llm = ChatGroq(model="llama-3.2-3b-preview")
 else:
     st.warning("Please enter both Google and Groq API keys.")
 
+# Model selection dropdown
+model_choice = st.selectbox(
+    "Select the LLM model:",
+    options=["llama-3.2-3b-preview", "llama-7b", "llama-13b"],
+    help="Choose the model to use for your chatbot.",
+)
 
+# Initialize LLM with Groq API key and selected model
+if "llm" not in st.session_state:
+    if groq_api_key:
+        st.session_state.llm = ChatGroq(model=model_choice)
+        st.success(f"Model {model_choice} loaded successfully!")
+    else:
+        st.error("Groq API key is missing!")
 
 # Define the prompt template
 prompt = ChatPromptTemplate.from_template(
@@ -82,9 +92,11 @@ if uploaded_file:
     user_query = st.chat_input("Enter your question:")
 
     if user_query:
+        with st.chat_message("user"):
+            st.write(user_query)
         try:
             # Create document retrieval chain
-            document_chain = create_stuff_documents_chain(llm, prompt)
+            document_chain = create_stuff_documents_chain(st.session_state.llm, prompt)
             retriever = st.session_state.vectors.as_retriever()
             chain_llm = create_retrieval_chain(retriever, document_chain)
 
@@ -95,3 +107,4 @@ if uploaded_file:
                 st.write(response["answer"])
         except Exception as e:
             st.error(f"An error occurred while processing your query: {e}")
+
