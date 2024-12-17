@@ -20,9 +20,6 @@ groq_api_key = st.text_input("Enter your Groq API key:", type="password")
 
 # Save API keys to .env if provided
 if google_api_key and groq_api_key:
-    st.session_state.google_api_key = google_api_key
-    st.session_state.groq_api_key = groq_api_key
-
     env_data = f"GROQ_API_KEY={groq_api_key}\nGOOGLE_API_KEY={google_api_key}"
     with open(".env", "w") as file:
         file.write(env_data)
@@ -50,7 +47,7 @@ if google_api_key and groq_api_key:
         st.success(f"Model {model_choice} loaded successfully!")
     
     # Define the prompt template
-        prompt = ChatPromptTemplate.from_template(
+    prompt = ChatPromptTemplate.from_template(
         """
         Answer the questions based on the provided context only.
         Please provide the most accurate response based on the question.
@@ -62,7 +59,7 @@ if google_api_key and groq_api_key:
     )
     
     # Function to embed PDF data into the vector store
-        def vector_db(pdf_file):
+    def vector_db(pdf_file):
             try:
                 # Save the uploaded PDF to a temporary file
                 with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_pdf:
@@ -84,10 +81,10 @@ if google_api_key and groq_api_key:
                 st.error(f"Error during vector database creation: {e}")
         
         # PDF file uploader
-        uploaded_file = st.file_uploader("Upload your PDF", type="pdf")
+    uploaded_file = st.file_uploader("Upload your PDF", type="pdf")
         
         # Handle PDF upload and embedding
-        if uploaded_file:
+    if uploaded_file:
             if "vectors" not in st.session_state:
                 vector_db(uploaded_file)
         
