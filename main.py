@@ -20,6 +20,7 @@ groq_api_key = st.text_input("Enter your Groq API key:", type="password")
 
 # Save API keys to .env if provided
 if google_api_key and groq_api_key:
+ if st.button("Submit API"):
     env_data = f"GROQ_API_KEY={groq_api_key}\nGOOGLE_API_KEY={google_api_key}"
     with open(".env", "w") as file:
         file.write(env_data)
@@ -93,6 +94,7 @@ if google_api_key and groq_api_key:
             user_query = st.chat_input("Enter your question:")
         
             if user_query:
+             if st.button("Send"):
                 with st.chat_message("user"):
                     st.write(user_query)
                 try:
