@@ -39,12 +39,9 @@ model_choice = st.selectbox(
 )
 
 # Initialize LLM with Groq API key and selected model
-if "llm" not in st.session_state:
-    if groq_api_key:
-        st.session_state.llm = ChatGroq(model=model_choice)
-        st.success(f"Model {model_choice} loaded successfully!")
-    else:
-        st.error("Groq API key is missing!")
+if st.button("Choose Model"):
+    st.session_state.llm = ChatGroq(model=model_choice)
+    st.success(f"Model {model_choice} loaded successfully!")
 
 # Define the prompt template
 prompt = ChatPromptTemplate.from_template(
