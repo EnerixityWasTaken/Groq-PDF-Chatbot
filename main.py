@@ -112,5 +112,3 @@ if uploaded_file:
                         st.write(response["answer"])
                 except Exception as e:
                     st.error(f"An error occurred while processing your query: {e}")
-else:
-    st.warning("Please enter both Google and Groq API keys.")
